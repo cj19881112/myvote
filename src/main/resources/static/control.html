@@ -30,7 +30,7 @@
             border-radius: 19px;
             position: relative;
             text-align: center;
-            box-shadow: -1px 15px 30px -12px #999;
+            box-shadow: -1px 15px 30px -12px black;
             z-index: 9999;
         }
 
@@ -47,7 +47,7 @@
 
         .card__content-title {
             text-align: center;
-            font-size: 30px;
+            font-size: 16px;
             font-weight: bold;
             margin: 10px 0px;
         }
@@ -58,7 +58,7 @@
 
         .card_btn {
             flex: 1;
-            background-color: #ec9b3b;
+            background-color: red;
             height: 60px;
             border-bottom-left-radius: 19px;
             border-bottom-right-radius: 19px;
@@ -88,7 +88,7 @@
         }
 
         .card_slab__cnt {
-            color: #ec9b3b;
+            color: red;
         }
 
         .switcher-wrapper {
@@ -104,7 +104,7 @@
         .switch-btn {
             flex: 1;
             margin: 5px;
-            background-color: #ec9b3b;
+            background-color: red;
         }
     </style>
 <body>
@@ -147,6 +147,7 @@
 <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
 <!-- 引入组件库 -->
 <script src="https://unpkg.com/mint-ui/lib/index.js"></script>
+<script src="https://cdn.bootcss.com/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
 <script>
     new Vue({
         el: '#app',
@@ -155,7 +156,7 @@
         },
         mounted: function () {
             var me = this;
-            this.ws = new WebSocket("ws://"+window.location.host+"/ws");
+            this.ws = new ReconnectingWebSocket("ws://" + window.location.host + "/ws");
             this.ws.onmessage = function (evt) {
                 var data = JSON.parse(evt.data);
                 me.sense = data.data

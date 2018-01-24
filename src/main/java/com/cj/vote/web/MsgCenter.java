@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.CookieValue;
 
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
@@ -12,21 +13,18 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 @Component
 @ServerEndpoint("/ws")
 public class MsgCenter {
-    protected final Logger logger = Logger.getLogger(this.getClass());
+    private final Logger logger = Logger.getLogger(this.getClass());
     private static final List<Session> sessionList = new LinkedList<>();
     private Gson gson = new GsonBuilder().create();
 
     @OnOpen
     public void open(Session session) {
-        logger.info("客户端接入");
         sessionList.add(session);
     }
 

@@ -106,19 +106,6 @@ public class VoteController {
     }
 
 
-    @RequestMapping("/switch/{senseId}")
-    public @ResponseBody
-    Ret<Void> switchTo(
-            @PathVariable("senseId") Long senseId) {
-        try {
-            senseService.switchTo(senseId);
-            msgCenter.broadCast(Message.switchSense(senseService.currentSense()));
-            return Ret.ok();
-        } catch (InvalidSenseException e) {
-            return Ret.err("无效的场景编号");
-        }
-    }
-
     @RequestMapping("/nextSense")
     public @ResponseBody
     Ret<Void> nextSense() {

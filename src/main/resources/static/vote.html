@@ -11,34 +11,32 @@
         body {
             padding: 0px;
             margin: 0px;
+            background-color: #eee;
         }
 
         #app {
-            background-color: #eee;
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
         }
 
         .panel {
             margin: 15px;
-            border-radius: 10px;
-            box-shadow: -1px 15px 30px -12px #999;
+            border-radius: 19px;
+            box-shadow: -1px 15px 30px -12px black;
+            display: flex;
+            flex-direction: column;
         }
 
         .panel__title {
             width: 100%;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
+            border-top-left-radius: 19px;
+            border-top-right-radius: 19px;
         }
 
         .name {
             text-align: center;
-            font-size: 30px;
+            font-size: 16px;
             font-weight: bold;
-            padding: 0px 0px 0px 0px;
+            padding: 15px 0px 5px 0px;
             background-color: white;
         }
 
@@ -51,14 +49,14 @@
         }
 
         .card {
-            border: 1px solid #eee;
+            border: 1px solid #ddd;
             background-color: white;
             flex: 1;
             overflow: hidden;
             margin: 10px 5px;
             display: flex;
             flex-direction: column;
-            border-radius: 4px;
+            border-radius: 8px;
         }
 
         .card > * {
@@ -78,26 +76,44 @@
         .card__name {
             color: #666;
             font-size: 13px;
+            text-align: center;
         }
 
         .card__btn {
-            height: 30px;
             font-size: 14px;
-            color: #e88905;
+            color: red;
+            text-align: center;
+        }
+
+        .card_btn--voted {
+            color: #666666;
         }
 
         .desc {
-            padding: 5px 15px;
+            padding: 5px 30px;
             color: #999;
-            font-size: 14px;
+            font-size: 12px;
         }
 
         .refresh-btn {
             width: 100%;
-            background-color: #e88905;
+            background-color: red;
             height: 50px;
-            border-bottom-left-radius: 10px;
-            border-bottom-right-radius: 10px;
+            line-height: 50px;
+            color: white;
+            text-align: center;
+            font-size: 18px;
+            border-bottom-left-radius: 19px;
+            border-bottom-right-radius: 19px;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        .card_btn-icon {
+            width: 13px;
+            height: 13px;
         }
     </style>
 <body>
@@ -114,20 +130,27 @@
                     <div class="card__name">
                         {{c.name}}
                     </div>
-                    <mt-button @click="vote(c.craftId)" :disabled="c.isVoted === '1' || sense.voting !== '1'"
-                               class="card__btn" type="default">投票
-                    </mt-button>
+                    <div @click="vote(c.craftId)" :disabled="c.isVoted === '1' || sense.voting !== '1'"
+                               class="card__btn" :class="{'card_btn--voted': c.isVoted === '1' || sense.voting !== '1'}" type="default">
+                        {{c.isVoted === '1' ? '已投票' : '投票'}}
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="btn-wrapper">
-            <mt-button @click="refresh" class="refresh-btn" type="primary">刷新</mt-button>
+            <div @click="refresh" class="refresh-btn" type="primary">刷新</div>
         </div>
     </div>
 
     <div class="desc">
-        说明：欢迎进行投票
+        投票细则：
+        <ul>
+            <li>本次评选采用现场投票制</li>
+            <li>组委会将组织员工代表、创委会及甲方代表分别做为大众评委及专业评委进行现场投票评选</li>
+            <li>大众评审对每一个奖项的三个入围作品其中一个进行一次投票</li>
+            <li>根据现场统计评选结果，  确定每个奖项的获奖结果，现场公布获奖结果</li>
+        </ul>
     </div>
 </div>
 </body>
@@ -136,6 +159,7 @@
 <!-- 引入组件库 -->
 <script src="https://unpkg.com/mint-ui/lib/index.js"></script>
 <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
 <script>
     //获取url中的参数
     function getUrlParam(name) {
@@ -154,7 +178,7 @@
             var me = this;
             me.loadData();
             var me = this;
-            this.ws = new WebSocket("ws://"+window.location.host+"/ws");
+            this.ws = new ReconnectingWebSocket("ws://" + window.location.host + "/ws");
             this.ws.onmessage = function (evt) {
                 var data = JSON.parse(evt.data);
                 me.sense = data.data
@@ -177,9 +201,7 @@
                 $.get('/vote/' + craftId + '/' + type, function (data) {
                     if (data.success) {
                         for (var i = 0; i < me.sense.craftList.length; i++) {
-                            if (me.sense.craftList[i].craftId === craftId) {
-                                me.sense.craftList[i].isVoted = '1'
-                            }
+                            me.sense.craftList[i].isVoted = '1'
                         }
                         alert('投票成功')
                         me.loadData();
@@ -190,7 +212,7 @@
             },
 
             refresh: function () {
-                this.loadData();
+                window.location.reload()
             }
         }
     })

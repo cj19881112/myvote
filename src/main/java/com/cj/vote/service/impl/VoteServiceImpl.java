@@ -27,9 +27,6 @@ public class VoteServiceImpl implements VoteService {
     @Override
     public void vote(Long craftId, String uid, String voteType)
             throws InvalidCraftException, InvalidSenseException, AlreadyVoteException {
-        if (voteRepo.countByUserId(craftId, uid) > 0) {
-            throw new AlreadyVoteException();
-        }
 
         Craft craft = craftService.findById(craftId);
         if (null == craft) {
@@ -37,8 +34,13 @@ public class VoteServiceImpl implements VoteService {
         }
 
         Sense sense = senseService.findById(craft.getSenseId());
+
+        if (voteRepo.countByUserId(sense.getSenseId(), uid) > 0) {
+            throw new AlreadyVoteException();
+        }
+
         if (null != sense && sense.getVoting().equals("1") && sense.getIsCurrent().equals("1")) {
-            voteRepo.save(new Vote(craftId, uid, voteType));
+            voteRepo.save(new Vote(sense.getSenseId(), craftId, uid, voteType));
         } else {
             throw new InvalidSenseException();
         }

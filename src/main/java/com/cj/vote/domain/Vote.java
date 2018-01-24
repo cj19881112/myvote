@@ -2,6 +2,7 @@ package com.cj.vote.domain;
 
 public class Vote {
     private Long userVoteId;
+    private Long senseId;
     private Long craftId;
     private String userId;
     private String voteType;
@@ -9,7 +10,8 @@ public class Vote {
     public Vote() {
     }
 
-    public Vote(Long craftId, String uid, String voteType) {
+    public Vote(Long senseId, Long craftId, String uid, String voteType) {
+        this.senseId = senseId;
         this.craftId = craftId;
         this.userId = uid;
         this.voteType = voteType;
@@ -46,5 +48,13 @@ public class Vote {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public Long getSenseId() {
+        return senseId;
+    }
+
+    public void setSenseId(Long senseId) {
+        this.senseId = senseId;
     }
 }

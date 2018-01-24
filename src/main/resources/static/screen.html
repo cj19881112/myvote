@@ -8,47 +8,26 @@
             margin: 0px;
             text-align: center;
             font-family: 微软雅黑;
-            background: -webkit-linear-gradient(top, #8c7a7a 0%, #af877c 65%, #af877c 100%) fixed;
-            background: linear-gradient(to bottom, #8c7a7a 0%, #af877c 65%, #af877c 100%) fixed;
-            background: url("logo.jpg");
+            background: url("screen_bg.jpg");
             background-size: 100%;
+            background-color: #eee;
         }
 
         #app {
             position: absolute;
             margin: auto;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
             padding: 0px 100px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background-color: rgba(0, 0, 0, .2);
-            color: white;
-        }
-
-        .header {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            height: 120px;
-        }
-
-        .logo {
-            width: 400px;
-        }
-
-        .title {
             color: white;
         }
 
         .sidebar {
             position: absolute;
             left: 100px;
-            bottom: 10px;
+            bottom: 40px;
             display: flex;
             flex-direction: column;
             color: white;
@@ -57,6 +36,7 @@
         .sidebar img {
             width: 200px;
             border: 2px solid white;
+            margin-bottom: 10px;
         }
 
         .card-container {
@@ -73,23 +53,26 @@
             border-radius: 19px;
             position: relative;
             text-align: center;
-            box-shadow: -1px 15px 30px -12px black;
+            box-shadow: 0px 0px 5px #eee;
             z-index: 9999;
             border: none;
-            max-width: 300px;
+            max-width: 350px;
             color: #666;
+        }
+
+        .card h4 {
+            margin: 3px 0px;
         }
 
         .card p {
             color: #999;
+            margin: 5px 0px;
         }
 
         .card__img {
             width: 100%;
-            height: 180px;
             border-top-left-radius: 19px;
             border-top-right-radius: 19px;
-            margin-bottom: 20px;
         }
 
         .card__vote-cnt {
@@ -97,10 +80,10 @@
             line-height: 80px;
             color: white;
             font-size: 50px;
-            background-color: #ec9b3b;
+            background-color: red;
             border-bottom-left-radius: 19px;
             border-bottom-right-radius: 19px;
-            border: 1px solid #ec9b3b;
+            border: 1px solid red;
         }
     </style>
 </head>
@@ -118,15 +101,14 @@
     </div>
 
     <div class="sidebar">
-        <img src="logo.jpg" class="logo">
         <img src="vote.png" class="qrcode">
         <span>-&nbsp;扫码投票&nbsp;-</span>
     </div>
 </div>
 
-
 <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
 <script>
     var app = new Vue({
         el: '#app',
@@ -137,7 +119,7 @@
             var me = this;
             me.loadData();
             var me = this;
-            this.ws = new WebSocket("ws://"+window.location.host+"/ws");
+            this.ws = new ReconnectingWebSocket("ws://" + window.location.host + "/ws");
             this.ws.onmessage = function (evt) {
                 var data = JSON.parse(evt.data);
                 me.sense = data.data
@@ -154,7 +136,6 @@
             }
         }
     })
-
 </script>
 </body>
 </html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh_CN.utf8">
+<head>
+    <meta charset="utf8">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <link rel="stylesheet" href="https://unpkg.com/mint-ui/lib/style.css">
+    <title>创意盛典</title>
+    <style>
+        body {
+            padding: 0px;
+            margin: 0px;
+        }
+
+        #app {
+            background-color: #eee;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        .panel {
+            margin: 15px;
+            border-radius: 10px;
+            box-shadow: -1px 15px 30px -12px #999;
+        }
+
+        .panel__title {
+            width: 100%;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .name {
+            text-align: center;
+            font-size: 30px;
+            font-weight: bold;
+            padding: 0px 0px 0px 0px;
+            background-color: white;
+        }
+        .panel__body {
+            background-color: white;
+        }
+
+        .card-container {
+            display: flex;
+        }
+
+        .card {
+            border: 1px solid #eee;
+            background-color: white;
+            flex: 1;
+            overflow: hidden;
+            margin: 10px 5px;
+            display: flex;
+            flex-direction: column;
+            border-radius: 4px;
+        }
+
+        .card > * {
+            margin-bottom: 5px;
+        }
+
+        .card__img {
+            width: 100%;
+            height: 80px;
+        }
+
+        .card__name, .card__btn {
+            margin-left: 5px;
+            margin-right: 5px;
+        }
+
+        .card__name {
+            color: #666;
+            font-size: 13px;
+        }
+
+        .card__btn {
+            height: 30px;
+            font-size: 14px;
+            color: #e88905;
+        }
+
+        .desc {
+            padding: 5px 15px;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .refresh-btn {
+            width: 100%;
+            background-color: #e88905;
+            height: 50px;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+    </style>
+<body>
+<div id="app">
+    <div class="panel">
+        <img class="panel__title" src="logo.jpg">
+
+        <div class="name">金曲奖</div>
+
+        <div class="panel__body">
+            <div class="card-container">
+                <div v-for="i in 3" class="card">
+                    <img class="card__img" src="1.jpg">
+                    <div class="card__name">
+                        作品名称1
+                    </div>
+                    <mt-button class="card__btn" type="default">投票</mt-button>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="btn-wrapper">
+            <mt-button @click="refresh" class="refresh-btn" type="primary">刷新</mt-button>
+        </div>
+    </div>
+
+    <div class="desc">
+        说明：欢迎进行投票
+    </div>
+</div>
+</body>
+<!-- 先引入 Vue -->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<!-- 引入组件库 -->
+<script src="https://unpkg.com/mint-ui/lib/index.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        methods: {
+            refresh: function () {
+                window.location.reload()
+            }
+        }
+    })
+</script>
+</html>

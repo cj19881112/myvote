@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh_CN.utf8">
+<head>
+    <meta charset="utf8">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <link rel="stylesheet" href="https://unpkg.com/mint-ui/lib/style.css">
+    <title>创意盛典</title>
+    <style>
+        body {
+            padding: 0px;
+            margin: 0px;
+        }
+
+        #app {
+            position: absolute;
+            background-color: #eee;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: scroll;
+        }
+
+        .card {
+            background: white;
+            display: inline-block;
+            margin: 50px 20px 0px 20px;
+            border-radius: 19px;
+            position: relative;
+            text-align: center;
+            box-shadow: -1px 15px 30px -12px #999;
+            z-index: 9999;
+        }
+
+        .card__img {
+            width: 100%;
+            border-top-left-radius: 19px;
+            border-top-right-radius: 19px;
+        }
+
+        .card__content {
+            height: 100px;
+            margin-bottom: 10px;
+        }
+
+        .card__content-title {
+            text-align: center;
+            font-size: 30px;
+            font-weight: bold;
+            margin: 10px 0px;
+        }
+
+        .card__btn-wrapper {
+            display: flex;
+        }
+
+        .card_btn {
+            flex: 1;
+            background-color: #ec9b3b;
+            height: 60px;
+            border-bottom-left-radius: 19px;
+            border-bottom-right-radius: 19px;
+            text-align: center;
+            line-height: 60px;
+            font-size: 20px;
+            color: white;
+        }
+
+        .card_info {
+            display: flex;
+        }
+
+        .card_slab {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card_slab__name {
+            margin-top: 5px;
+            color: #9e9e9e;
+        }
+
+        .card_slab__cnt {
+            color: #ec9b3b;
+        }
+
+        .switcher-wrapper {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: white;
+            box-shadow: 0px -5px 30px #999;
+            display: flex;
+        }
+
+        .switch-btn {
+            flex: 1;
+            margin: 5px;
+            background-color: #ec9b3b;
+        }
+    </style>
+<body>
+<div id="app">
+    <div class="card">
+        <img class="card__img" src="logo.jpg">
+        <div class="card__content">
+            <div class="card__content-title">金曲奖</div>
+            <div class="card_info">
+                <div v-for="i in 3" class="card_slab">
+                    <span class="card_slab__cnt">20</span>
+                    <span class="card_slab__name">总票数</span>
+                </div>
+            </div>
+        </div>
+        <div class="card__btn-wrapper">
+            <div class="card_btn">
+                启动投票
+            </div>
+        </div>
+    </div>
+    <div class="switcher-wrapper">
+        <mt-button @click="prev()" class="switch-btn" type="primary">上一个</mt-button>
+        <mt-button @click="next()" class="switch-btn" type="primary">下一个</mt-button>
+
+    </div>
+</div>
+</body>
+<!-- 先引入 Vue -->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<!-- 引入组件库 -->
+<script src="https://unpkg.com/mint-ui/lib/index.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        methods: {}
+    })
+</script>
+</html>

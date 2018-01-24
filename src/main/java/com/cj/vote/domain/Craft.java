@@ -10,6 +10,7 @@ public class Craft {
     private String isVoted;
     private Long normalVote;
     private Long expertVote;
+    private String desc;
 
     public Long getCraftId() {
         return craftId;
@@ -73,5 +74,13 @@ public class Craft {
 
     public void setIsVoted(String isVoted) {
         this.isVoted = isVoted;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 }

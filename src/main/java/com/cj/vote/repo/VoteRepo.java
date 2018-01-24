@@ -15,8 +15,8 @@ public class VoteRepo {
                 vote.getCraftId(), vote.getUserId(), vote.getVoteType());
     }
 
-    public int countByUserId (String uid) {
-        return db.queryForObject("select count(0) from t_vote t where t.user_id = ? ",
-                new Object[]{uid}, Integer.class);
+    public int countByUserId(Long craftId, String uid) {
+        return db.queryForObject("select count(0) from t_vote t where t.user_id = ? and t.craft_id = ?",
+                new Object[]{uid, craftId}, Integer.class);
     }
 }

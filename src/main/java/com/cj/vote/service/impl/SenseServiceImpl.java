@@ -29,6 +29,16 @@ public class SenseServiceImpl implements SenseService {
     }
 
     @Override
+    public Sense currentSense() throws InvalidSenseException {
+        Sense sense = senseRepo.currentSense();
+        if (null == sense) {
+            throw new InvalidSenseException();
+        }
+        sense.setCraftList(craftService.findBySenseId(sense.getSenseId()));
+        return sense;
+    }
+
+    @Override
     public Sense findById(Long senseId) {
         return senseRepo.findById(senseId);
     }
@@ -39,7 +49,27 @@ public class SenseServiceImpl implements SenseService {
         if (null == sense) {
             throw new InvalidSenseException();
         }
-        senseRepo.stop(senseId);
+        senseRepo.changeStatus(senseId, "0");
+    }
+
+
+    @Override
+    public void start(Long senseId) throws InvalidSenseException {
+        Sense sense = senseRepo.currentSense();
+        if (null == sense) {
+            throw new InvalidSenseException();
+        }
+        senseRepo.changeStatus(senseId, "1");
+    }
+
+    @Override
+    public void nextSense() throws InvalidSenseException {
+        switchTo(currentSense().getSenseId()+1);
+    }
+
+    @Override
+    public void prevSense() throws InvalidSenseException {
+        switchTo(currentSense().getSenseId()-1);
     }
 
     @Override
@@ -55,4 +85,5 @@ public class SenseServiceImpl implements SenseService {
     public List<Sense> allSense() {
         return senseRepo.findAll();
     }
+
 }

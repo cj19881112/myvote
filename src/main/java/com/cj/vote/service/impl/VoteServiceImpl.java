@@ -27,7 +27,7 @@ public class VoteServiceImpl implements VoteService {
     @Override
     public void vote(Long craftId, String uid, String voteType)
             throws InvalidCraftException, InvalidSenseException, AlreadyVoteException {
-        if (voteRepo.countByUserId(uid) > 0) {
+        if (voteRepo.countByUserId(craftId, uid) > 0) {
             throw new AlreadyVoteException();
         }
 

@@ -8,6 +8,9 @@ public class Sense {
     private String isCurrent;
     private String senseName;
     private String voting;
+    private String hasNext;
+    private String hasPrev;
+    private String img;
 
     private List<Craft> craftList;
 
@@ -57,5 +60,29 @@ public class Sense {
 
     public void setCraftList(List<Craft> craftList) {
         this.craftList = craftList;
+    }
+
+    public String getHasNext() {
+        return hasNext;
+    }
+
+    public void setHasNext(String hasNext) {
+        this.hasNext = hasNext;
+    }
+
+    public String getHasPrev() {
+        return hasPrev;
+    }
+
+    public void setHasPrev(String hasPrev) {
+        this.hasPrev = hasPrev;
+    }
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
     }
 }

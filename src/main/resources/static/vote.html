@@ -41,6 +41,7 @@
             padding: 0px 0px 0px 0px;
             background-color: white;
         }
+
         .panel__body {
             background-color: white;
         }
@@ -102,22 +103,23 @@
 <body>
 <div id="app">
     <div class="panel">
-        <img class="panel__title" src="logo.jpg">
+        <img class="panel__title" :src="sense.img">
 
-        <div class="name">金曲奖</div>
+        <div class="name">{{sense.senseName}}</div>
 
         <div class="panel__body">
             <div class="card-container">
-                <div v-for="i in 3" class="card">
-                    <img class="card__img" src="1.jpg">
+                <div v-for="c in sense.craftList" class="card">
+                    <img class="card__img" :src="c.img">
                     <div class="card__name">
-                        作品名称1
+                        {{c.name}}
                     </div>
-                    <mt-button class="card__btn" type="default">投票</mt-button>
+                    <mt-button @click="vote(c.craftId)" :disabled="c.isVoted === '1' || sense.voting !== '1'"
+                               class="card__btn" type="default">投票
+                    </mt-button>
                 </div>
             </div>
         </div>
-
 
         <div class="btn-wrapper">
             <mt-button @click="refresh" class="refresh-btn" type="primary">刷新</mt-button>
@@ -133,12 +135,62 @@
 <script src="https://unpkg.com/vue/dist/vue.js"></script>
 <!-- 引入组件库 -->
 <script src="https://unpkg.com/mint-ui/lib/index.js"></script>
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
 <script>
+    //获取url中的参数
+    function getUrlParam(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+        if (r != null) return unescape(r[2]);
+        return null; //返回参数值
+    }
+
     new Vue({
         el: '#app',
+        data: {
+            sense: {}
+        },
+        mounted: function () {
+            var me = this;
+            me.loadData();
+            var me = this;
+            this.ws = new WebSocket("ws://"+window.location.host+"/ws");
+            this.ws.onmessage = function (evt) {
+                var data = JSON.parse(evt.data);
+                me.sense = data.data
+            };
+        },
         methods: {
+            loadData: function () {
+                var me = this
+                $.get('/currentSense', function (data) {
+                    if (data.success) {
+                        me.sense = data.data
+                    }
+                })
+            },
+
+            vote: function (craftId) {
+                var me = this
+                var type = getUrlParam('type')
+                type = type ? type : '0'
+                $.get('/vote/' + craftId + '/' + type, function (data) {
+                    if (data.success) {
+                        for (var i = 0; i < me.sense.craftList.length; i++) {
+                            if (me.sense.craftList[i].craftId === craftId) {
+                                me.sense.craftList[i].isVoted = '1'
+                            }
+                        }
+                        alert('投票成功')
+                        me.loadData();
+                    } else {
+                        alert('投票失败：' + data.msg)
+                    }
+                })
+            },
+
             refresh: function () {
-                window.location.reload()
+                this.loadData();
             }
         }
     })

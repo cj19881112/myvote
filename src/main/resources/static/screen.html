@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>创意盛典</title>
+    <style>
+        body {
+            margin: 0px;
+            text-align: center;
+            font-family: 微软雅黑;
+            background: -webkit-linear-gradient(top, #8c7a7a 0%, #af877c 65%, #af877c 100%) fixed;
+            background: linear-gradient(to bottom, #8c7a7a 0%, #af877c 65%, #af877c 100%) fixed;
+            background: url("logo.jpg");
+            background-size: 100%;
+        }
+
+        #app {
+            position: absolute;
+            margin: auto;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 0px 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 0, 0, .2);
+            color: white;
+        }
+
+        .header {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 120px;
+        }
+
+        .logo {
+            width: 400px;
+        }
+
+        .title {
+            color: white;
+        }
+
+        .sidebar {
+            position: absolute;
+            left: 100px;
+            bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            color: white;
+        }
+
+        .sidebar img {
+            width: 200px;
+            border: 2px solid white;
+        }
+
+        .card-container {
+            display: flex;
+            justify-content: space-between;
+            width: 1000px;
+        }
+
+        .card {
+            background: white;
+            flex: 1;
+            display: inline-block;
+            margin: 0px 10px;
+            border-radius: 19px;
+            position: relative;
+            text-align: center;
+            box-shadow: -1px 15px 30px -12px black;
+            z-index: 9999;
+            border: none;
+            max-width: 300px;
+            color: #666;
+        }
+
+        .card p {
+            color: #999;
+        }
+
+        .card__img {
+            width: 100%;
+            height: 180px;
+            border-top-left-radius: 19px;
+            border-top-right-radius: 19px;
+            margin-bottom: 20px;
+        }
+
+        .card__vote-cnt {
+            height: 80px;
+            line-height: 80px;
+            color: white;
+            font-size: 50px;
+            background-color: #ec9b3b;
+            border-bottom-left-radius: 19px;
+            border-bottom-right-radius: 19px;
+            border: 1px solid #ec9b3b;
+        }
+    </style>
+</head>
+<body>
+<div id="app" class="main">
+    <div class="card-container">
+        <div v-for="c in sense.craftList" class="card">
+            <img class="card__img" :src="c.img">
+            <h4>{{c.name}}</h4>
+            <p>{{c.desc}}</p>
+            <div class="card__vote-cnt">
+                {{c.normalVote + c.expertVote * 8}}
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <img src="logo.jpg" class="logo">
+        <img src="vote.png" class="qrcode">
+        <span>-&nbsp;扫码投票&nbsp;-</span>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            sense: {}
+        },
+        mounted: function () {
+            var me = this;
+            me.loadData();
+            var me = this;
+            this.ws = new WebSocket("ws://"+window.location.host+"/ws");
+            this.ws.onmessage = function (evt) {
+                var data = JSON.parse(evt.data);
+                me.sense = data.data
+            };
+        },
+        methods: {
+            loadData: function () {
+                var me = this
+                $.get('/currentSense', function (data) {
+                    if (data.success) {
+                        me.sense = data.data
+                    }
+                })
+            }
+        }
+    })
+
+</script>
+</body>
+</html>

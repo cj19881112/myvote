@@ -1,5 +1,6 @@
 package com.cj.vote.web;
 
+import com.cj.vote.domain.Message;
 import com.cj.vote.domain.Sense;
 import com.cj.vote.service.SenseService;
 import com.cj.vote.service.VoteService;
@@ -28,12 +29,18 @@ public class VoteController {
     private SenseService senseService;
 
     @Autowired
+    private MsgCenter msgCenter;
+
+    @Autowired
     private VoteService voteService;
 
     public String createUID(String uid, HttpServletResponse resp) {
         if (StringUtils.isEmpty(uid)) {
             uid = UUID.randomUUID().toString();
-            resp.addCookie(new Cookie("uid", uid));
+            Cookie c = new Cookie("myuid", uid);
+            c.setPath("/");
+            c.setMaxAge(60*60*60);
+            resp.addCookie(c);
         }
         return uid;
     }
@@ -41,7 +48,7 @@ public class VoteController {
     @RequestMapping("/currentSense")
     public @ResponseBody
     Ret<Sense> currentSense(
-            @CookieValue(name = "uid", required = false) String uid,
+            @CookieValue(name = "myuid", required = false) String uid,
             HttpServletResponse resp) {
         uid = createUID(uid, resp);
         try {
@@ -54,13 +61,14 @@ public class VoteController {
     @RequestMapping("/vote/{craftId}/{voteType}")
     public @ResponseBody
     Ret<Void> vote(
-            @CookieValue(name = "uid", required = false) String uid,
+            @CookieValue(name = "myuid", required = false) String uid,
             @PathVariable("craftId") Long craftId,
             @PathVariable("voteType") String voteType,
             HttpServletResponse resp) {
         uid = createUID(uid, resp);
         try {
             voteService.vote(craftId, uid, voteType);
+            msgCenter.broadCast(Message.vote(senseService.currentSense()));
         } catch (InvalidCraftException e) {
             return Ret.err("无效的作品编号");
         } catch (InvalidSenseException e) {
@@ -77,11 +85,26 @@ public class VoteController {
             @PathVariable("senseId") Long senseId) {
         try {
             senseService.stop(senseId);
+            msgCenter.broadCast(Message.startStop(senseService.currentSense()));
             return Ret.ok();
         } catch (InvalidSenseException e) {
             return Ret.err("无效的场景编号");
         }
     }
+
+    @RequestMapping("/start/{senseId}")
+    public @ResponseBody
+    Ret<Void> start(
+            @PathVariable("senseId") Long senseId) {
+        try {
+            senseService.start(senseId);
+            msgCenter.broadCast(Message.startStop(senseService.currentSense()));
+            return Ret.ok();
+        } catch (InvalidSenseException e) {
+            return Ret.err("无效的场景编号");
+        }
+    }
+
 
     @RequestMapping("/switch/{senseId}")
     public @ResponseBody
@@ -89,6 +112,31 @@ public class VoteController {
             @PathVariable("senseId") Long senseId) {
         try {
             senseService.switchTo(senseId);
+            msgCenter.broadCast(Message.switchSense(senseService.currentSense()));
+            return Ret.ok();
+        } catch (InvalidSenseException e) {
+            return Ret.err("无效的场景编号");
+        }
+    }
+
+    @RequestMapping("/nextSense")
+    public @ResponseBody
+    Ret<Void> nextSense() {
+        try {
+            senseService.nextSense();
+            msgCenter.broadCast(Message.switchSense(senseService.currentSense()));
+            return Ret.ok();
+        } catch (InvalidSenseException e) {
+            return Ret.err("无效的场景编号");
+        }
+    }
+
+    @RequestMapping("/prevSense")
+    public @ResponseBody
+    Ret<Void> prevSense() {
+        try {
+            senseService.prevSense();
+            msgCenter.broadCast(Message.switchSense(senseService.currentSense()));
             return Ret.ok();
         } catch (InvalidSenseException e) {
             return Ret.err("无效的场景编号");

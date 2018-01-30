@@ -16,9 +16,9 @@ public class SenseRepo {
 
     public Sense currentSense() {
         List<Sense> senses = db.query("SELECT *, now() c_time," +
-                        "(SELECT COUNT(0) FROM t_sense u WHERE u.sense_id > t.sense_id) hasNext, " +
-                        "(SELECT COUNT(0) FROM t_sense u WHERE u.sense_id < t.sense_id) hasPrev FROM " +
-                        "t_sense t WHERE t.is_current = ?",
+                        "(SELECT COUNT(0) FROM t_sense u WHERE u.sort > t.sort) hasNext, " +
+                        "(SELECT COUNT(0) FROM t_sense u WHERE u.sort < t.sort) hasPrev FROM " +
+                        "t_sense t WHERE t.is_current = ? ORDER BY t.sort;",
                 new Object[]{EnumBoolean.TRUE.getFlag()},
                 new BeanPropertyRowMapper<Sense>(Sense.class));
         if (senses != null && senses.size() > 0) {
@@ -29,8 +29,8 @@ public class SenseRepo {
 
     public Sense findById(Long senseId) {
         List<Sense> senses = db.query("SELECT *, now() c_time, " +
-                        "(SELECT count(0) FROM t_sense u WHERE u.sense_id > t.sense_id) hasNext, " +
-                        "(SELECT count(0) FROM t_sense u WHERE u.sense_id < t.sense_id) hasPrev FROM " +
+                        "(SELECT count(0) FROM t_sense u WHERE u.sort > t.sort) hasNext, " +
+                        "(SELECT count(0) FROM t_sense u WHERE u.sort < t.sort) hasPrev FROM " +
                         "t_sense t WHERE t.sense_id = ?",
                 new Object[]{senseId},
                 new BeanPropertyRowMapper<Sense>(Sense.class));
@@ -58,8 +58,21 @@ public class SenseRepo {
 
     public List<Sense> findAll() {
         return db.query("SELECT *, now() c_time," +
-                        "(SELECT count(0) FROM t_sense u WHERE u.sense_id > t.sense_id) hasNext," +
-                        "(SELECT count(0) FROM t_sense u WHERE u.sense_id < t.sense_id) hasPrev FROM t_sense ",
+                        "(SELECT count(0) FROM t_sense u WHERE u.sort > t.sort) hasNext," +
+                        "(SELECT count(0) FROM t_sense u WHERE u.sort < t.sort) hasPrev FROM t_sense ORDER BY t.sort;",
                 new BeanPropertyRowMapper<Sense>(Sense.class));
+    }
+
+    public Sense findBySort(Long sort) {
+        List<Sense> senses = db.query("SELECT *, now() c_time, " +
+                        "(SELECT count(0) FROM t_sense u WHERE u.sort > t.sort) hasNext, " +
+                        "(SELECT count(0) FROM t_sense u WHERE u.sort < t.sort) hasPrev FROM " +
+                        "t_sense t WHERE t.sort = ?;",
+                new Object[]{sort},
+                new BeanPropertyRowMapper<>(Sense.class));
+        if (senses != null && senses.size() > 0) {
+            return senses.get(0);
+        }
+        return null;
     }
 }

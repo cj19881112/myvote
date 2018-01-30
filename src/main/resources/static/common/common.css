@@ -5,7 +5,7 @@ body {
     margin: 0px;
     background-color: #eee;
     text-align: center;
-    font-family: 微软雅黑;
+    font-family: '微软雅黑';
 }
 
 ul {
@@ -87,10 +87,4 @@ ul {
         transform: rotate(-360deg);
         -webkit-transform: rotate(-360deg);
     }
-}
-
-.sense-name {
-    font-size: 60px;
-    font-weight: bold;
-    padding-bottom: 30px;
 }

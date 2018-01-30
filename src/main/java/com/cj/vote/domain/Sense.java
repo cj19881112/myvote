@@ -15,6 +15,7 @@ public class Sense {
     private Date startTime;
     private Date stopTime;
     private Date cTime;
+    private Long sort;
 
     private List<Craft> craftList;
 
@@ -112,5 +113,13 @@ public class Sense {
 
     public void setcTime(Date cTime) {
         this.cTime = cTime;
+    }
+
+    public Long getSort() {
+        return sort;
+    }
+
+    public void setSort(Long sort) {
+        this.sort = sort;
     }
 }

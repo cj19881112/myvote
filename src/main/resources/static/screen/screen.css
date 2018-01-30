@@ -48,13 +48,12 @@ body {
     text-align: center;
     box-shadow: 0px 0px 5px #eee;
     border: none;
-    width: 33%;
     max-width: 350px;
-    color: #666;
+    color: black;
 }
 
 .card h4 {
-    margin: 3px 0px;
+    margin: 10px 0px 15px 0px;
 }
 
 .card p {
@@ -63,7 +62,9 @@ body {
 }
 
 .card__img {
-    width: 100%;
+    width: 300px;
+    height: 300px;
+    border-bottom: 1px solid #ddd;
     border-top-left-radius: 19px;
     border-top-right-radius: 19px;
 }
@@ -77,4 +78,11 @@ body {
     border-bottom-left-radius: 19px;
     border-bottom-right-radius: 19px;
     border: 1px solid red;
+}
+
+
+.sense-name {
+    font-size: 35px;
+    font-weight: bold;
+    padding-bottom: 20px;
 }

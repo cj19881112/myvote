@@ -76,23 +76,27 @@ public class SenseServiceImpl implements SenseService {
     @Override
     @Transactional
     public void nextSense() {
-        switchTo(currentSense().getSenseId() + 1);
+        switchTo(currentSense().getSort() + 1);
     }
 
     @Override
     @Transactional
     public void prevSense() {
-        switchTo(currentSense().getSenseId() - 1);
+        switchTo(currentSense().getSort() - 1);
     }
 
     @Override
     @Transactional
-    public void switchTo(Long senseId) {
-        Sense s = findById(senseId);
+    public void switchTo(Long sort) {
+        if (sort < 0) {
+            throw new InvalidSenseException();
+        }
+        Sense s = senseRepo.findBySort(sort);
         if (null == s) {
             throw new InvalidSenseException();
         }
-        senseRepo.setIsCurrent(senseId);
+        senseRepo.setIsCurrent(s.getSenseId());
         msgCenter.broadCast(Message.SWITCH_MSG);
     }
+
 }

@@ -88,3 +88,9 @@ ul {
         -webkit-transform: rotate(-360deg);
     }
 }
+
+.sense-name {
+    font-size: 60px;
+    font-weight: bold;
+    padding-bottom: 30px;
+}

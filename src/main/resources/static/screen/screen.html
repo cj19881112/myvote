@@ -8,6 +8,7 @@
 </head>
 <body>
 <div id="app" class="main">
+    <div class="sense-name">{{sense.senseName}}</div>
     <div class="card-container">
         <div v-for="c in sense.craftList" class="card">
             <img class="card__img" :src="c.img">

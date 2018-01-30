@@ -23,9 +23,9 @@ public class GlobalExceptionHandler {
      * @throws Exception
      */
     @ExceptionHandler(value = Exception.class)
-    public String allExceptionHandler(HttpServletRequest request,
+    public Ret<Void> allExceptionHandler(HttpServletRequest request,
                                       Exception e) throws Exception {
         logger.trace("发生异常：" + e.getMessage(), e);
-        return G.gson.toJson(Ret.err(e.getMessage()));
+        return Ret.err(e.getMessage());
     }
 }

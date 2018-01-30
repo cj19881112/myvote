@@ -3,6 +3,7 @@ package com.cj.vote.web;
 import com.cj.vote.domain.Craft;
 import com.cj.vote.domain.Message;
 import com.cj.vote.domain.Sense;
+import com.cj.vote.utils.G;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.log4j.Logger;
@@ -29,54 +30,29 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class MsgCenter {
     private final Logger logger = Logger.getLogger(this.getClass());
     private static final List<Session> sessionList = new LinkedList<>();
-    private static final List<Session> sessionListScreenAndControl = new LinkedList<>();
-    private Gson gson = new GsonBuilder().create();
 
     @Autowired
     private Sender sender;
 
-    private Map<Long, Integer> maxVoting = new HashMap<>();
-
     @OnOpen
     public void open(Session session) {
+        logger.info("接收到客户端的连接");
+        sessionList.add(session);
     }
 
     @OnClose
     public void close(Session session) {
-        sessionListScreenAndControl.remove(session);
+        logger.info("客户端断开连接");
         sessionList.remove(session);
     }
 
     @OnMessage
-    public void msg(String msgStr, Session session) {
-        Map<String, String> map = gson.fromJson(msgStr, Map.class);
-        String type = map.get("type");
-        if (type.equals("vote")) {
-        } else {
-            sessionListScreenAndControl.add(session);
-        }
-        sessionList.add(session);
+    public void onMessage(String msgStr, Session session) {
+        // 客户端心跳
     }
 
     public synchronized void broadCast(Message msg) {
-        if (msg.getCode().equals(Message.VOTE)) {
-            Sense sense = (Sense) msg.getData();
-            int total = 0;
-            for (Craft c : sense.getCraftList()) {
-                total += c.getNormalVote();
-                total += c.getExpertVote();
-            }
-
-            Integer max = maxVoting.get(sense.getSenseId());
-            if (null == max) {
-                max = 0;
-            }
-            if (total > max) {
-                maxVoting.put(sense.getSenseId(), total);
-                sender.sendNotify(msg, sessionListScreenAndControl);
-            }
-        } else {
-            sender.sendNotify(msg, sessionList);
-        }
+        logger.info("发送消息:" + msg.getCode() + ",给" + sessionList.size() + "个客户端");
+        sender.sendNotify(msg, sessionList);
     }
 }

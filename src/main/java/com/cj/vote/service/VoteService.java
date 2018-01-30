@@ -8,5 +8,5 @@ import com.cj.vote.utils.InvalidSenseException;
 import java.util.List;
 
 public interface VoteService {
-    void vote(Long craftId, String uid, String voteType) throws InvalidCraftException, InvalidSenseException, AlreadyVoteException;
+    void vote(Long craftId, String uid, String voteType);
 }

@@ -3,6 +3,7 @@ package com.cj.vote.service.impl;
 import com.cj.vote.domain.Craft;
 import com.cj.vote.domain.Sense;
 import com.cj.vote.domain.Vote;
+import com.cj.vote.domain.enumeration.EnumBoolean;
 import com.cj.vote.repo.VoteRepo;
 import com.cj.vote.service.CraftService;
 import com.cj.vote.service.SenseService;
@@ -25,8 +26,7 @@ public class VoteServiceImpl implements VoteService {
     private CraftService craftService;
 
     @Override
-    public void vote(Long craftId, String uid, String voteType)
-            throws InvalidCraftException, InvalidSenseException, AlreadyVoteException {
+    public void vote(Long craftId, String uid, String voteType) {
 
         Craft craft = craftService.findById(craftId);
         if (null == craft) {
@@ -34,15 +34,15 @@ public class VoteServiceImpl implements VoteService {
         }
 
         Sense sense = senseService.findById(craft.getSenseId());
-
         if (voteRepo.countByUserId(sense.getSenseId(), uid) > 0) {
             throw new AlreadyVoteException();
         }
 
-        if (null != sense && sense.getVoting().equals("1") && sense.getIsCurrent().equals("1")) {
-            voteRepo.save(new Vote(sense.getSenseId(), craftId, uid, voteType));
-        } else {
+        if (null == sense || !EnumBoolean.TRUE.getFlag().equals(sense.getVoting())
+                || !EnumBoolean.TRUE.getFlag().equals(sense.getIsCurrent())) {
             throw new InvalidSenseException();
         }
+
+        voteRepo.save(new Vote(sense.getSenseId(), craftId, uid, voteType));
     }
 }

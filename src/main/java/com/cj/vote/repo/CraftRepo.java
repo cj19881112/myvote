@@ -16,7 +16,8 @@ public class CraftRepo {
     public List<Craft> findBySenseId(Long senseId) {
         return db.query("SELECT *, " +
                         "(SELECT count(0) FROM t_vote u WHERE u.craft_id = t.craft_id AND u.vote_type = '0') AS normal_vote, " +
-                        "(SELECT count(0) FROM t_vote u WHERE u.craft_id = t.craft_id AND u.vote_type = '1') AS expert_vote " +
+                        "(SELECT count(0) FROM t_vote u WHERE u.craft_id = t.craft_id AND u.vote_type = '1') AS expert_vote," +
+                        "(SELECT count(0) FROM t_vote u WHERE u.craft_id = t.craft_id AND u.vote_type = '2') AS super_vote  " +
                         "FROM t_craft t WHERE t.sense_id = ?;",
                 new Object[]{senseId},
                 new BeanPropertyRowMapper<Craft>(Craft.class));
@@ -26,6 +27,7 @@ public class CraftRepo {
         return db.query("SELECT *, " +
                         "(SELECT count(0) FROM t_vote u WHERE u.craft_id = t.craft_id AND u.vote_type = '0') AS normal_vote, " +
                         "(SELECT count(0) FROM t_vote u WHERE u.craft_id = t.craft_id AND u.vote_type = '1') AS expert_vote, " +
+                        "(SELECT count(0) FROM t_vote u WHERE u.craft_id = t.craft_id AND u.vote_type = '2') AS super_vote, " +
                         "(SELECT count(0) FROM t_vote m WHERE m.user_id = ? AND m.sense_id = ?) > 0 AS is_voted FROM t_craft t WHERE t.sense_id = ?;",
                 new Object[]{userId, senseId, senseId},
                 new BeanPropertyRowMapper<Craft>(Craft.class));

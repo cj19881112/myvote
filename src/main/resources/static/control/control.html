@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh_CN.utf8">
+<head>
+    <meta charset="utf8">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <title>创意盛典</title>
+    <link rel="stylesheet" href="https://unpkg.com/mint-ui/lib/style.css">
+    <link rel="stylesheet" href="../common/common.css">
+    <link rel="stylesheet" href="control.css">
+<body>
+<div id="app">
+    <div class="card">
+        <img class="card__img" :src="sense.img">
+        <div class="card__content">
+            <div class="card__content-title">{{sense.senseName}}</div>
+            <div class="card_info">
+                <div class="card_slab">
+                    <span class="card_slab__cnt">{{normalVote + expertVote}}</span>
+                    <span class="card_slab__name">总票数</span>
+                </div>
+                <div class="card_slab">
+                    <span class="card_slab__cnt">{{normalVote}}</span>
+                    <span class="card_slab__name">普通票数</span>
+                </div>
+                <div class="card_slab">
+                    <span class="card_slab__cnt">{{expertVote}}</span>
+                    <span class="card_slab__name">专家票数</span>
+                </div>
+            </div>
+        </div>
+        <div class="card__btn-wrapper">
+            <div @click="startVote" v-if="sense.voting === '0'" class="card_btn">
+                启动投票
+            </div>
+            <div @click="stopVote" v-else class="card_btn card_btn--stop">
+                停止投票
+            </div>
+        </div>
+    </div>
+    <div class="switcher-wrapper">
+        <mt-button :disabled="parseInt(sense.hasPrev) == 0" @click="prev()" class="switch-btn" type="primary">上一个</mt-button>
+        <mt-button :disabled="parseInt(sense.hasNext) == 0" @click="next()" class="switch-btn" type="primary">下一个</mt-button>
+    </div>
+</div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
+<script src="https://unpkg.com/mint-ui/lib/index.js"></script>
+<script src="../common/common.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            sense: {}
+        },
+        mounted: function () {
+            registWebsocket(this);
+            pollData(this);
+        },
+        methods: {
+            loadData: function () {
+                var me = this
+                $.get('/currentSense', function (data) {
+                    if (data.success) {
+                        me.sense = data.data
+                    } else {
+                        alert('加载数据失败:' + data.msg)
+                    }
+                })
+            },
+
+            stopVote: function () {
+                var me = this;
+
+                M.mask();
+                $.get('/stop/' + this.sense.senseId, function (data) {
+                    if (data.success) {
+                        me.loadData()
+                    } else {
+                        alert('停止投票失败:' + data.msg)
+                    }
+                })
+            },
+
+            startVote: function () {
+                var me = this;
+                M.mask();
+                $.get('/start/' + this.sense.senseId, function (data) {
+                    if (data.success) {
+                        me.loadData()
+                    } else {
+                        alert('启动投票失败:' + data.msg)
+                    }
+                })
+            },
+
+            next: function () {
+                var me = this;
+                M.mask();
+                $.get('/nextSense', function (data) {
+                    if (data.success) {
+                        me.loadData()
+                    } else {
+                        alert('切换场景失败:' + data.msg)
+                    }
+                })
+            },
+
+            prev: function () {
+                var me = this;
+                M.mask();
+                $.get('/prevSense', function (data) {
+                    if (data.success) {
+                        me.loadData()
+                    } else {
+                        alert('切换场景失败:' + data.msg)
+                    }
+                })
+            }
+        },
+
+        computed: {
+            normalVote: function () {
+                if (!this.sense.craftList) {
+                    return 0;
+                }
+                var total = 0;
+                for (var i = 0; i < this.sense.craftList.length; i++) {
+                    total += this.sense.craftList[i].normalVote;
+                }
+                return total;
+            },
+            expertVote: function () {
+                if (!this.sense.craftList) {
+                    return 0;
+                }
+                var total = 0;
+                for (var i = 0; i < this.sense.craftList.length; i++) {
+                    total += this.sense.craftList[i].expertVote;
+                    total += this.sense.craftList[i].superVote;
+                }
+                return total;
+            }
+        }
+    })
+</script>
+</html>

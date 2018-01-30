@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh_CN.utf8">
+<head>
+    <meta charset="utf8">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <title>创意盛典</title>
+    <link rel="stylesheet" href="../common/common.css">
+    <link rel="stylesheet" href="vote.css">
+<body>
+<div id="app">
+    <div class="panel" v-if="show">
+        <img class="panel__title" :src="sense.img">
+
+        <div class="name">{{sense.senseName}}</div>
+
+        <div class="panel__body">
+            <div class="card-container">
+                <div v-for="c in sense.craftList" class="card">
+                    <img class="card__img" :src="c.img">
+                    <div class="card__name">
+                        {{c.name}}
+                    </div>
+
+                    <div @click="vote(c)" class="card__btn"
+                         :class="{'card_btn--voted': c.isVoted === '1' || sense.voting !== '1'}"
+                    >
+                        <img v-if="c.isVoted === '0' && sense.voting === '1'" class="upvote-icon" src="../imgs/upvote-enabled.png">
+                        <span v-if="c.isVoted === '1'">已投票</span>
+                        <span v-else>
+                            <span v-if="sense.voting === '1'">投票</span>
+                            <span v-else>未开始</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="btn-wrapper">
+            <div @click="refresh" class="refresh-btn" type="primary">刷新</div>
+        </div>
+    </div>
+
+    <div class="desc" v-if="show">
+        投票细则：
+        <ul>
+            <li>本次评选采用现场投票制</li>
+            <li>组委会将组织员工代表、创委会及甲方代表分别做为大众评委及专业评委进行现场投票评选</li>
+            <li>大众评审对每一个奖项的三个入围作品其中一个进行一次投票</li>
+            <li>根据现场统计评选结果， 确定每个奖项的获奖结果，现场公布获奖结果</li>
+        </ul>
+    </div>
+
+    <div class="tips" v-if="!show">
+        请在微信的打开本页面
+    </div>
+</div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
+<script src="../common/common.js"></script>
+<script>
+    //获取url中的参数
+    function getUrlParam(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+        if (r != null) return unescape(r[2]);
+        return null; //返回参数值
+    }
+
+    new Vue({
+        el: '#app',
+        data: {
+            show: false,
+            sense: {}
+        },
+        mounted: function () {
+            var me = this;
+            var ua = navigator.userAgent.toLowerCase();
+            //if (ua.match(/MicroMessenger/i) == "micromessenger") {
+                registWebsocket(this);
+                this.show = true
+            //}
+        },
+        methods: {
+            loadData: function () {
+                var me = this
+                $.get('/currentSense', function (data) {
+                    if (data.success) {
+                        me.sense = data.data
+                    } else {
+                        alert("加载数据失败，请刷新");
+                    }
+                })
+            },
+
+            vote: function (craft) {
+                if (craft.isVoted === '1' || this.sense.voting !== '1') {
+                    return;
+                }
+                var me = this
+                var type = getUrlParam('type')
+                type = type ? type : '0'
+                M.mask()
+                $.get('/vote/' + craft.craftId + '/' + type, function (data) {
+                    if (data.success) {
+                        for (var i = 0; i < me.sense.craftList.length; i++) {
+                            me.sense.craftList[i].isVoted = '1'
+                        }
+                        alert('投票成功')
+                        me.loadData();
+                    } else {
+                        alert('投票失败：' + data.msg)
+                    }
+                })
+            },
+
+            refresh: function () {
+                window.location.reload()
+            }
+        }
+    })
+</script>
+</html>

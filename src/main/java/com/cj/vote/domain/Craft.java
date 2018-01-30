@@ -10,6 +10,7 @@ public class Craft {
     private String isVoted;
     private Long normalVote;
     private Long expertVote;
+    private Long superVote;
     private String desc;
 
     public Long getCraftId() {
@@ -82,5 +83,13 @@ public class Craft {
 
     public void setDesc(String desc) {
         this.desc = desc;
+    }
+
+    public Long getSuperVote() {
+        return superVote;
+    }
+
+    public void setSuperVote(Long superVote) {
+        this.superVote = superVote;
     }
 }

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>创意盛典</title>
+    <link rel="stylesheet" href="../common/common.css">
+    <link rel="stylesheet" href="screen.css">
+</head>
+<body>
+<div id="app" class="main">
+    <div class="card-container">
+        <div v-for="c in sense.craftList" class="card">
+            <img class="card__img" :src="c.img">
+            <h4>{{c.name}}</h4>
+            <p>{{c.desc}}</p>
+            <div class="card__vote-cnt">
+                {{c.normalVote * 3 + c.expertVote * 25 + c.superVote * 50}}
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <img @click="loadData()" src="../imgs/vote-qrcode.png" class="qrcode">
+        <span>-&nbsp;扫码投票&nbsp;-</span>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
+<script src="../common/common.js"></script>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            sense: {}
+        },
+        mounted: function () {
+            registWebsocket(this);
+            pollData(this);
+        },
+        methods: {
+            loadData: function () {
+                var me = this
+                $.get('/currentSense', function (data) {
+                    if (data.success) {
+                        me.sense = data.data
+                    }
+                })
+            }
+        }
+    })
+</script>
+</body>
+</html>

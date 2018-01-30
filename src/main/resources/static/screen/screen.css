@@ -1,0 +1,80 @@
+body {
+    background: url("../imgs/screen-bg.jpg");
+    background-size: 100%;
+}
+
+#app {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    padding: 0px 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.sidebar {
+    position: absolute;
+    left: 100px;
+    bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    color: white;
+}
+
+.sidebar img {
+    width: 200px;
+    border: 2px solid white;
+    margin-bottom: 10px;
+}
+
+.card-container {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1000px;
+}
+
+.card {
+    background: white;
+    flex: 1;
+    display: inline-block;
+    margin: 0px 10px;
+    border-radius: 19px;
+    text-align: center;
+    box-shadow: 0px 0px 5px #eee;
+    border: none;
+    width: 33%;
+    max-width: 350px;
+    color: #666;
+}
+
+.card h4 {
+    margin: 3px 0px;
+}
+
+.card p {
+    color: #999;
+    margin: 5px 0px;
+}
+
+.card__img {
+    width: 100%;
+    border-top-left-radius: 19px;
+    border-top-right-radius: 19px;
+}
+
+.card__vote-cnt {
+    height: 80px;
+    line-height: 80px;
+    color: white;
+    font-size: 50px;
+    background-color: red;
+    border-bottom-left-radius: 19px;
+    border-bottom-right-radius: 19px;
+    border: 1px solid red;
+}

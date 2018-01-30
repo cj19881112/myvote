@@ -31,6 +31,7 @@
 
 .card-container {
     display: flex;
+    padding: 0px 4px;
 }
 
 .card {
@@ -38,7 +39,7 @@
     background-color: white;
     flex: 1;
     overflow: hidden;
-    margin: 10px 5px;
+    margin: 10px 2px;
     display: flex;
     flex-direction: column;
     border-radius: 8px;
@@ -50,7 +51,8 @@
 
 .card__img {
     width: 100%;
-    height: 80px;
+    height: 90px;
+    border-bottom: 1px solid #eee;
 }
 
 .card__name, .card__btn {
@@ -63,6 +65,9 @@
     font-size: 13px;
     text-align: center;
     height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .card__btn {

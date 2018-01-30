@@ -79,10 +79,10 @@
         mounted: function () {
             var me = this;
             var ua = navigator.userAgent.toLowerCase();
-            //if (ua.match(/MicroMessenger/i) == "micromessenger") {
+            // if (ua.match(/MicroMessenger/i) == "micromessenger") {
                 registWebsocket(this);
                 this.show = true
-            //}
+            // }
         },
         methods: {
             loadData: function () {

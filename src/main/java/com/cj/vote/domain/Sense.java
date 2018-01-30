@@ -1,5 +1,6 @@
 package com.cj.vote.domain;
 
+import java.util.Date;
 import java.util.List;
 
 public class Sense {
@@ -11,6 +12,9 @@ public class Sense {
     private String hasNext;
     private String hasPrev;
     private String img;
+    private Date startTime;
+    private Date stopTime;
+    private Date cTime;
 
     private List<Craft> craftList;
 
@@ -84,5 +88,29 @@ public class Sense {
 
     public void setImg(String img) {
         this.img = img;
+    }
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public Date getStopTime() {
+        return stopTime;
+    }
+
+    public void setStopTime(Date stopTime) {
+        this.stopTime = stopTime;
+    }
+
+    public Date getcTime() {
+        return cTime;
+    }
+
+    public void setcTime(Date cTime) {
+        this.cTime = cTime;
     }
 }

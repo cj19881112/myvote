@@ -14,7 +14,7 @@
             <h4>{{c.name}}</h4>
             <p>{{c.desc}}</p>
             <div class="card__vote-cnt">
-                {{c.normalVote * 3 + c.expertVote * 25 + c.superVote * 50}}
+                {{ sense.voting === '1' ? c.displayNum : c.voteCnt }}
             </div>
         </div>
     </div>
@@ -33,20 +33,63 @@
     var app = new Vue({
         el: '#app',
         data: {
-            sense: {}
+            interval: [null, null, null],
+            sense: {},
+            startTime: null,
+            tick: 0
         },
         mounted: function () {
-            registWebsocket(this);
-            pollData(this);
+            var me = this;
+            $.get('/now', function (data) {
+                if (data.success) {
+                    me.tick = data.data - new Date().getTime();
+                    registWebsocket(me);
+                    pollData(me);
+
+                    for (var i = 0; i < 3; i++) {
+                        me.interval[i] = me.setupInterval(i);
+                    }
+                } else {
+                    alert('同步时间失败')
+                }
+            });
+
         },
         methods: {
             loadData: function () {
                 var me = this
                 $.get('/currentSense', function (data) {
                     if (data.success) {
+                        if (me.sense.senseId === data.data.senseId) {
+                            for (var i = 0; i < me.sense.craftList.length; i++) {
+                                data.data.craftList[i].displayNum = me.sense.craftList[i].displayNum
+                            }
+                        }
+
                         me.sense = data.data
+                        for (var i = 0; i < me.sense.craftList.length; i++) {
+                            var c = me.sense.craftList[i]
+                            c.voteCnt = c.normalVote * 3 + c.expertVote * 25 + c.superVote * 50;
+                        }
                     }
                 })
+            },
+
+            setupInterval: function(i) {
+                var me = this;
+                setInterval(function() {
+                    if (!me.sense.craftList) {
+                        return
+                    }
+                    var craft = me.sense.craftList[i]
+                    var now = new Date().getTime() + me.tick;
+                    var radio = (now - me.sense.startTime) / (90 * 1000);
+                    var total = Math.floor(craft.voteCnt * radio);
+                    if (total > craft.voteCnt) {
+                        total = craft.voteCnt;
+                    }
+                    Vue.set(craft, 'displayNum', total)
+                }, 50);
             }
         }
     })

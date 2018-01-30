@@ -17,7 +17,7 @@ function registWebsocket (obj) {
             obj.ws = new ReconnectingWebSocket("ws://" + window.location.host + "/ws");
             obj.ws.onmessage = function (evt) {
                 // 收到服务器信息，刷新数据
-                obj.loadData();
+                obj.loadData(JSON.parse(evt.data));
             };
             obj.loadData();
             setInterval(function () {
@@ -53,7 +53,3 @@ var M = {
         $('.spinner').hide()
     }
 }
-
-$(document).ajaxStop(function() {
-    M.unmask();
-})

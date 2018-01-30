@@ -10,6 +10,7 @@ import com.cj.vote.utils.InvalidSenseException;
 import com.cj.vote.web.MsgCenter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -50,6 +51,7 @@ public class SenseServiceImpl implements SenseService {
     }
 
     @Override
+    @Transactional
     public void stop(Long senseId) {
         Sense sense = senseRepo.currentSense();
         if (null == sense) {
@@ -61,6 +63,7 @@ public class SenseServiceImpl implements SenseService {
 
 
     @Override
+    @Transactional
     public void start(Long senseId) {
         Sense sense = senseRepo.currentSense();
         if (null == sense) {
@@ -71,16 +74,19 @@ public class SenseServiceImpl implements SenseService {
     }
 
     @Override
+    @Transactional
     public void nextSense() {
         switchTo(currentSense().getSenseId() + 1);
     }
 
     @Override
+    @Transactional
     public void prevSense() {
         switchTo(currentSense().getSenseId() - 1);
     }
 
     @Override
+    @Transactional
     public void switchTo(Long senseId) {
         Sense s = findById(senseId);
         if (null == s) {

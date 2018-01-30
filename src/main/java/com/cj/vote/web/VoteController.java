@@ -1,6 +1,5 @@
 package com.cj.vote.web;
 
-import com.cj.vote.domain.Message;
 import com.cj.vote.domain.Sense;
 import com.cj.vote.service.SenseService;
 import com.cj.vote.service.VoteService;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 import java.util.UUID;
 
 @Controller
@@ -38,6 +38,12 @@ public class VoteController {
             resp.addCookie(c);
         }
         return uid;
+    }
+
+    @RequestMapping("/now")
+    public @ResponseBody
+    Ret<Date> now() {
+        return Ret.ok(new Date());
     }
 
     /**
@@ -77,9 +83,11 @@ public class VoteController {
     @RequestMapping("/vote/{craftId}/{voteType}")
     public @ResponseBody
     Ret<Void> vote(
-            @CookieValue(name = UID_NAME) String uid,
+            @CookieValue(name = UID_NAME, required = false) String uid,
             @PathVariable("craftId") Long craftId,
-            @PathVariable("voteType") String voteType) {
+            @PathVariable("voteType") String voteType,
+            HttpServletResponse resp) {
+        uid = createUID(uid, resp);
         voteService.vote(craftId, uid, voteType);
         return Ret.ok();
     }
@@ -99,6 +107,7 @@ public class VoteController {
 
     /**
      * 开始投票
+     *
      * @param senseId
      * @return
      */
@@ -112,6 +121,7 @@ public class VoteController {
 
     /**
      * 下一场景
+     *
      * @return
      */
     @RequestMapping("/nextSense")
@@ -123,6 +133,7 @@ public class VoteController {
 
     /**
      * 前一场景
+     *
      * @return
      */
     @RequestMapping("/prevSense")

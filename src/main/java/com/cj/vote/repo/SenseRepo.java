@@ -15,9 +15,9 @@ public class SenseRepo {
     private JdbcTemplate db;
 
     public Sense currentSense() {
-        List<Sense> senses = db.query("SELECT *, " +
-                        "(SELECT count(0) FROM t_sense u WHERE u.sense_id > t.sense_id) hasNext, " +
-                        "(SELECT count(0) FROM t_sense u WHERE u.sense_id < t.sense_id) hasPrev FROM " +
+        List<Sense> senses = db.query("SELECT *, now() c_time," +
+                        "(SELECT COUNT(0) FROM t_sense u WHERE u.sense_id > t.sense_id) hasNext, " +
+                        "(SELECT COUNT(0) FROM t_sense u WHERE u.sense_id < t.sense_id) hasPrev FROM " +
                         "t_sense t WHERE t.is_current = ?",
                 new Object[]{EnumBoolean.TRUE.getFlag()},
                 new BeanPropertyRowMapper<Sense>(Sense.class));
@@ -28,7 +28,7 @@ public class SenseRepo {
     }
 
     public Sense findById(Long senseId) {
-        List<Sense> senses = db.query("SELECT *, " +
+        List<Sense> senses = db.query("SELECT *, now() c_time, " +
                         "(SELECT count(0) FROM t_sense u WHERE u.sense_id > t.sense_id) hasNext, " +
                         "(SELECT count(0) FROM t_sense u WHERE u.sense_id < t.sense_id) hasPrev FROM " +
                         "t_sense t WHERE t.sense_id = ?",
@@ -41,8 +41,13 @@ public class SenseRepo {
     }
 
     public int changeStatus(Long senseId, String status) {
-        return db.update("UPDATE t_sense t SET t.voting = ? WHERE t.sense_id = ?",
-                new Object[]{status, senseId});
+        if (status.equals(EnumBoolean.TRUE.getFlag())) {
+            return db.update("UPDATE t_sense t SET t.voting = ?, t.start_time = now() WHERE t.sense_id = ?",
+                    new Object[]{status, senseId});
+        } else {
+            return db.update("UPDATE t_sense t SET t.voting = ?, t.stop_time = now() WHERE t.sense_id = ?",
+                    new Object[]{status, senseId});
+        }
     }
 
     public void setIsCurrent(Long senseId) {
@@ -52,7 +57,7 @@ public class SenseRepo {
     }
 
     public List<Sense> findAll() {
-        return db.query("SELECT *," +
+        return db.query("SELECT *, now() c_time," +
                         "(SELECT count(0) FROM t_sense u WHERE u.sense_id > t.sense_id) hasNext," +
                         "(SELECT count(0) FROM t_sense u WHERE u.sense_id < t.sense_id) hasPrev FROM t_sense ",
                 new BeanPropertyRowMapper<Sense>(Sense.class));

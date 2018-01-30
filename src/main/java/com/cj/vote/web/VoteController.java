@@ -45,6 +45,15 @@ public class VoteController {
         return uid;
     }
 
+    @RequestMapping("/sign")
+    public @ResponseBody
+    Ret<String> signUp(
+            @CookieValue(name = "myuid", required = false) String uid,
+            HttpServletResponse resp) {
+        uid = createUID(uid, resp);
+        return Ret.ok(uid);
+    }
+
     @RequestMapping("/currentSense")
     public @ResponseBody
     Ret<Sense> currentSense(
